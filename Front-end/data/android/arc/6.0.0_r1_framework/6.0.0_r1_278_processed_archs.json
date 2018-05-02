@@ -1,0 +1,1 @@
+{"version_list": ["6.0.0_r1"], "package_list": ["app"], "name": "combined", "children": [{"clusters": ["278"], "package_level": 2, "name": "6.0.0_r1", "children": [{"name": "278", "change": 0, "children": [{"titles": [], "name": "android.app.ResourcesManager", "version": "6.0.0_r1", "bodys": [], "labels": [], "ids": [], "change": 0, "size": 1}]}]}]}

@@ -1,0 +1,1 @@
+{"version_list": ["6.0.0_r1"], "package_list": ["filterfw"], "name": "combined", "children": [{"clusters": ["356"], "package_level": 2, "name": "6.0.0_r1", "children": [{"name": "356", "change": 0, "children": [{"titles": [], "name": "android.filterfw.io.PatternScanner", "version": "6.0.0_r1", "bodys": [], "labels": [], "ids": [], "change": 0, "size": 1}]}]}]}

@@ -1,0 +1,1 @@
+{"version_list": ["6.0.0_r1"], "package_list": ["android"], "name": "combined", "children": [{"clusters": ["271"], "package_level": 2, "name": "6.0.0_r1", "children": [{"name": "271", "change": 0, "children": [{"titles": [], "name": "com.android.server.am.CoreSettingsObserver", "version": "6.0.0_r1", "bodys": [], "labels": [], "ids": [], "change": 0, "size": 1}]}]}]}

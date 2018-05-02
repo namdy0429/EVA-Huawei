@@ -1,0 +1,1 @@
+{"version_list": ["6.0.0_r1"], "package_list": ["hardware"], "name": "combined", "children": [{"clusters": ["287"], "package_level": 2, "name": "6.0.0_r1", "children": [{"name": "287", "change": 0, "children": [{"titles": [], "name": "android.hardware.camera2.legacy.BurstHolder", "version": "6.0.0_r1", "bodys": [], "labels": [], "ids": [], "change": 0, "size": 1}]}]}]}
