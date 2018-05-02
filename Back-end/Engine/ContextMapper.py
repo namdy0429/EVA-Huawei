@@ -36,7 +36,7 @@ def ContextMapper(software_name, file_names, target_sub, layer, recovery_name = 
 		else:
 			label = file.split('_'+ recovery_name)[0].split(software_name+'-')[1]
 		arch = Architecture(label, target_sub, is_component_arch)
-		arch.load_architecture(join(cur_dir, "Data", "Architecture", software_name, recovery_name, file))
+		arch.load_architecture(join(cur_dir, "Data", "Architecture", software_name, recovery_name, layer, file))
 		architectures.append(arch.sort())
 
 	recovered_versions = []
