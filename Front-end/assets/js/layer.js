@@ -110,14 +110,14 @@ function renderGraph() {
     version_list = root.version_list;
     for (i=0; i<num_ver; i++) {
       var print_version = root.version_list[i]
-      var version_id = "ver" + print_version.replace(/\./i, '').replace(/\s/g, '');
+      var version_id = "ver" + print_version.replace(/\./g, '').replace(/\s/g, '');
       $("#partial_title").html(params.target_sub)
       $("#version_list").append(
         "<li class='ver_list' version='"+print_version+"' id='"+version_id+ "'><a href='#' id='"+version_id+"_btn' style='text-align: left; padding-left: 10px;' onclick='showSingleVersion(&#39;"+print_version+"&#39;, "+num_ver+")'>Version "+ print_version + "</a></li>"
       )
     }
     for (i=0; i<num_ver-1; i++){
-      var version_id = "ver" + root.version_list[i].replace(/\./i, '').replace(/\s/g, '');
+      var version_id = "ver" + root.version_list[i].replace(/\./g, '').replace(/\s/g, '');
       $("#hist_version_list").append(
         "<li class='hist_ver_list' version='"+root.version_list[i]+"' id='hist_"+version_id+ "' style='display:none;'><a href='#' id='hist_"+version_id+"_btn' style='text-align: left; padding-left: 40px;' onclick='showArchChange(&#39;"+root.version_list[i]+"&#39;, "+num_ver+")'>Architectural Changes "+ root.version_list[i] + " &#8594 " + root.version_list[i+1] + "</a></li>"
         )
@@ -483,7 +483,7 @@ function add(a,b) {
 
 function showSingleVersion(version, num_ver) {
   if (is_selecting) {
-    var list_id = "#ver" + version.replace(/\./i, '').replace(/\s/g, '');
+    var list_id = "#ver" + version.replace(/\./g, '').replace(/\s/g, '');
     if ($(list_id).hasClass("chosen")) {
       $(list_id).removeClass("chosen");
       $(list_id).addClass("option");
@@ -514,7 +514,7 @@ function showSingleVersion(version, num_ver) {
 
     var cluster_class = ".cluster" + version_list.indexOf(version);
     var node_class = ".node" + version_list.indexOf(version);
-    var list_id = "#ver" + version.toString().replace(/\./i, '').replace(/\s/g, '');
+    var list_id = "#ver" + version.toString().replace(/\./g, '').replace(/\s/g, '');
 
     var all_cluster = ".cluster";
     var all_node = ".node";
@@ -605,7 +605,7 @@ function showHistory() {
     var cluster_class = ".cluster" + version_list.indexOf(version);
     var layer_class = ".layer" + version_list.indexOf(version);
     var node_class = ".node" + version_list.indexOf(version);
-    var list_id = "#ver" + version.toString().replace(/\./i, '').replace(/\s/g, '');
+    var list_id = "#ver" + version.toString().replace(/\./g, '').replace(/\s/g, '');
 
     $(".cluster").css("opacity", "0.2");
     $(".layer").css("opacity", "0.2");
@@ -635,7 +635,7 @@ function showHistory() {
     var cluster_class = ".cluster" + version_list.indexOf(version);
     var layer_class = ".layer" + version_list.indexOf(version);
     var node_class = ".node" + version_list.indexOf(version);
-    var list_id = "#ver" + version.toString().replace(/\./i, '').replace(/\s/g, '');
+    var list_id = "#ver" + version.toString().replace(/\./g, '').replace(/\s/g, '');
 
     $(".cluster").css("opacity", "0.2");
     $(".layer").css("opacity", "0.2");
@@ -657,14 +657,14 @@ function showHistory() {
 }
 
 function showArchChange(version, num_ver) {
-  var list_id = "#hist_ver" + version.replace(/\./i, '').replace(/\s/g, '');
+  var list_id = "#hist_ver" + version.replace(/\./g, '').replace(/\s/g, '');
   $(".ver_list").removeClass("active");
   $(".hist_ver_list").removeClass("active");
   $(list_id).addClass("active");
 
   var cluster_class = ".cluster" + version_list.indexOf(version);
   var node_class = ".node" + version_list.indexOf(version);
-  var list_id = "#ver" + version.toString().replace(/\./i, '').replace(/\s/g, '');
+  var list_id = "#ver" + version.toString().replace(/\./g, '').replace(/\s/g, '');
 
   $(".node>circle").css("stroke", "none");
   $(".node>circle").css("opacity", "0.2");

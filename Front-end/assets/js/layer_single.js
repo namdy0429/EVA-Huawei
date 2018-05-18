@@ -93,7 +93,7 @@ function renderGraph() {
     version_list = root.version_list;
     for (i=0; i<num_ver; i++) {
       var print_version = root.version_list[i]
-      var version_id = "ver" + print_version.replace(/\./i, '').replace(/\s/g, '');
+      var version_id = "ver" + print_version.replace(/\./g, '').replace(/\s/g, '');
       $("#partial_title").html(params.target_sub)
     }
     $("#current_ver").val(root.version_list[0])
@@ -299,7 +299,7 @@ function showColor(){
 
 function showSingleVersion(version, num_ver) {
   if (is_selecting) {
-    var list_id = "#ver" + version.replace(/\./i, '').replace(/\s/g, '');
+    var list_id = "#ver" + version.replace(/\./g, '').replace(/\s/g, '');
     if ($(list_id).hasClass("chosen")) {
       $(list_id).removeClass("chosen");
       $(list_id).addClass("option");
@@ -330,7 +330,7 @@ function showSingleVersion(version, num_ver) {
 
     var cluster_class = ".cluster" + version_list.indexOf(version);
     var node_class = ".node" + version_list.indexOf(version);
-    var list_id = "#ver" + version.toString().replace(/\./i, '').replace(/\s/g, '');
+    var list_id = "#ver" + version.toString().replace(/\./g, '').replace(/\s/g, '');
 
     var all_cluster = ".cluster";
     var all_node = ".node";
