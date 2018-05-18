@@ -67,6 +67,8 @@ class Architecture:
             content = f.readlines()
             content.sort()
             for line in content:
+                if "/" in line:
+                    line = line.replace("/", ".")
                 (d, label, class_name) = line.split()
                 if self.is_component_arch:
                     if self.target_sub not in label:

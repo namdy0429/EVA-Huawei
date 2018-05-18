@@ -1,4 +1,4 @@
-var version_colors = ["orange", "gold", "lightpink"];
+var version_colors = ["orange", "gold"];
 
 var affine_angle = 0.3;
 var num_ver = 2;
@@ -10,7 +10,6 @@ var layer_history_x = ["-=150", "+=100"];
 var node_history_x = ["-=300", "+=200"];
 var layer_history_y = ["+=25", "-=5"];
 var node_history_y = ["+=50", "-=10"];
-
 var reverse_layer_history_x = ["+=150", "-=100"];
 var reverse_node_history_x = ["+=300", "-=200"];
 var reverse_layer_history_y = ["-=25", "+=5"];
@@ -30,6 +29,13 @@ var chosenArray = new Array();
 
 var color = d3.scaleSequential();
 var package_list;
+
+
+var url_string = window.location.href;
+var url = new URL(url_string);
+var params = parse_query_string(url.search);
+var input_file_name = "data/android/" + params.recovery + "/" + params.ver1 + "_" + params.ver2 + "_" + params.layer + "/" + params.ver1 + "_" + params.ver2 + "_" + params.target_sub + "_processed_archs.json"
+var compare_versions = [0, 0, 0];
 
 function parse_query_string(query) {
   var vars = query.split("&");
@@ -51,21 +57,6 @@ function parse_query_string(query) {
   return query_string;
 }
 
-
-var url_string = window.location.href;
-console.log(url_string)
-var url = new URL(url_string);
-console.log(url)
-var params = parse_query_string(url.search);
-console.log("recovery_name: " + params.recovery);
-console.log("ver1: " + params.ver1);
-console.log("ver2: " + params.ver2);
-console.log("target_sub: " + params.target_sub);
-
-var input_file_name = "data/android/" + params.recovery + "/" + params.ver1 + "_" + params.ver2 + "_" + params.layer + "/" + params.ver1 + "_" + params.ver2 + "_" + params.target_sub + "_processed_archs.json"
-console.log(input_file_name)
-
-
 function sleep(milliseconds) {
   var start = new Date().getTime();
   for (var i = 0; i < 1e7; i++) {
@@ -80,14 +71,15 @@ function changeMode(mode) {
   else if (mode == 'Single')        viewMode = 'Single';
 }
 
-
 function renderGraph() {
   $(".table_index>a").attr('href', function() {
-    return 'http://localhost:8888/EVA/Front-end/index_combined.html?&recovery=' + params.recovery +'&ver1=' + params.ver1 + '&ver2=' + params.ver2 + '&layer=' + $(this).attr("layer") + '&target_sub=' + $(this).attr("package")
+    return location.href.split('index_combined.html')[0] + 'index_combined.html?&recovery=' + params.recovery +'&ver1=' + params.ver1 + '&ver2=' + params.ver2 + '&layer=' + $(this).attr("layer") + '&target_sub=' + $(this).attr("package")
+    // return 'http://localhost:8888/EVA/Front-end/index_combined.html?&recovery=' + params.recovery +'&ver1=' + params.ver1 + '&ver2=' + params.ver2 + '&layer=' + $(this).attr("layer") + '&target_sub=' + $(this).attr("package")
   })  
-
-  $("#ver1_btn").text($("#filename1").val());
-  $("#ver2_btn").text($("#filename2").val());
+  $(".recovery_btn").attr("onclick", function() {
+    return "window.open('" + location.href.split('index_combined.html')[0] + params.recovery + ".html')"
+    // return "window.open('http://localhost:8888/EVA/Front-end/" + params.recovery + ".html')"
+  })
 
   // set svg width to be responsive
   $("#svg_history").attr("width", window.innerWidth*0.8);
@@ -123,21 +115,20 @@ function renderGraph() {
       $("#version_list").append(
         "<li class='ver_list' version='"+print_version+"' id='"+version_id+ "'><a href='#' id='"+version_id+"_btn' style='text-align: left; padding-left: 10px;' onclick='showSingleVersion(&#39;"+print_version+"&#39;, "+num_ver+")'>Version "+ print_version + "</a></li>"
       )
-    
-  }
-  for (i=0; i<num_ver-1; i++){
-    var version_id = "ver" + root.version_list[i].replace(/\./i, '').replace(/\s/g, '');
-    $("#hist_version_list").append(
-      "<li class='hist_ver_list' version='"+root.version_list[i]+"' id='hist_"+version_id+ "' style='display:none;'><a href='#' id='hist_"+version_id+"_btn' style='text-align: left; padding-left: 40px;' onclick='showArchChange(&#39;"+root.version_list[i]+"&#39;, "+num_ver+")'>Architectural Changes "+ root.version_list[i] + " &#8594 " + root.version_list[i+1] + "</a></li>"
-      )
-  }
-  $("#current_ver").val(root.version_list[0])
-  // $("hist_btn").setAttribute("onclick", "showHistory("+$('#current_ver').)
-  $("#version_list").append(
-      "<li class='ver_list chosen' version='' id='diff' style='display:none;'><a href='#' style='text-align: left; padding-left: 10px;' id='diff_btn' onclick='showDifference_comparison()' >Difference</a></li>"
+    }
+    for (i=0; i<num_ver-1; i++){
+      var version_id = "ver" + root.version_list[i].replace(/\./i, '').replace(/\s/g, '');
+      $("#hist_version_list").append(
+        "<li class='hist_ver_list' version='"+root.version_list[i]+"' id='hist_"+version_id+ "' style='display:none;'><a href='#' id='hist_"+version_id+"_btn' style='text-align: left; padding-left: 40px;' onclick='showArchChange(&#39;"+root.version_list[i]+"&#39;, "+num_ver+")'>Architectural Changes "+ root.version_list[i] + " &#8594 " + root.version_list[i+1] + "</a></li>"
+        )
+    }
+    $("#current_ver").val(root.version_list[0])
+    $("#version_list").append(
+        "<li class='ver_list chosen' version='' id='diff' style='display:none;'><a href='#' style='text-align: left; padding-left: 10px;' id='diff_btn' onclick='showDifference_comparison()' >Difference</a></li>"
     )
-  start_version = version_list[0];
-  showSingleVersion(version_list[0], num_ver);
+    start_version = version_list[0];
+    showSingleVersion(version_list[0], num_ver);
+    
     // set color spectrum
     color.domain([root.package_list.length, 0]);
     color.interpolator(d3.interpolateSpectral);
@@ -149,16 +140,15 @@ function renderGraph() {
         "<li class='color_list'>"  
           + "<div class='list_circle' style='display: none; background-color: " + color(i) + ";'></div>"
           + "<div class='list_index' style='display: none; '>" + params.target_sub + "</div>"
-      + "</li>\n");
+          + "</li>\n");
       }
       else {
         $("#package_list").append(
         "<li class='color_list'>"  
           + "<div class='list_circle' style='display: none; background-color: " + color(i) + ";'></div>"
           + "<div class='list_index' style='display: none; '>" + params.target_sub + "." + root.package_list[i] + "</div>"
-      + "</li>\n");
-      }
-      
+          + "</li>\n");
+      } 
     }
 
     for (v=0; v<num_ver; v++){
@@ -172,7 +162,7 @@ function renderGraph() {
         $("#cluster_list"+v).append(
           "<li class='color_list'>"  
             + "<div class='list_circle' style='display: none; background-color: #ffffff;'></div>"
-            + "<div class='list_index' style='display: none;'> <a href='" + "http://localhost:8888/EVA/Front-end/index_single.html?&recovery=" + params.recovery + "&ver1=" + params.ver1 + "&ver2=" + params.ver2 + "&single=" + root.version_list[v] + "&layer=" + params.layer + "&target_sub=" + root.children[v].clusters[i] + "'>" + root.children[v].clusters[i] + "</a></div>"
+            + "<div class='list_index' style='display: none;'> <a href='" + location.href.split('index_combined.html')[0] + "index_single.html?&recovery=" + params.recovery + "&ver1=" + params.ver1 + "&ver2=" + params.ver2 + "&single=" + root.version_list[v] + "&layer=" + params.layer + "&target_sub=" + root.children[v].clusters[i] + "'>" + root.children[v].clusters[i] + "</a></div>"
         + "</li>\n");
       }
     }
@@ -184,75 +174,63 @@ function renderGraph() {
 
     for (var i=0; i<num_ver; i++) {
       ver_root[i] = d3.hierarchy(root.children[i])
-              .sum(function(d) { return d.size ? 1 : 0; })
-              .sort(function(a, b) { 
-                if (params.recovery == 'acdc') return b.height - a.height || b.value - a.value || b.data.name.toLowerCase() > a.data.name.toLowerCase();
-                else  return b.height - a.height || b.value - a.value; })
-              .each(function(d) {
-                if (name = d.data.name) {
-                  var name, i = name.lastIndexOf(".");
-                  d.name = name;
-                  d.package = name.slice(0, i);
-                  d.class = name.slice(i+1);
-                }
-              });
+                      .sum(function(d) { return d.size ? 1 : 0; })
+                      .sort(function(a, b) { 
+                        if (params.recovery == 'acdc') return b.height - a.height || b.value - a.value || b.data.name.toLowerCase() > a.data.name.toLowerCase();
+                        else  return b.height - a.height || b.value - a.value; })
+                      .each(function(d) {
+                        if (name = d.data.name) {
+                          var name, i = name.lastIndexOf(".");
+                          d.name = name;
+                          d.package = name.slice(0, i);
+                          d.class = name.slice(i+1);
+                        }
+                      });
     }
 
     var clusters = []
     for (var i=0; i<num_ver; i++) {
-
       var cluster_class = "cluster cluster" + i + " layer" + i;
       clusters[i] = svg.selectAll(cluster_class)
-        .data(pack(ver_root[i]).children)
-        .enter().append("g")
-        .attr("class", function(d) {
-          // console.log(d.data)
-          if (d.data.change == -1)  return cluster_class + " dummy_cluster";
-          else return cluster_class;
-        })
-        .attr("transform", function(d) { 
-        return "translate(" + parseFloat(d.x)  + "," + parseFloat(d.y) + ")"; })
-        .style("visibility", function(d){
-          if (version_list[i] != cur_idx) {
-            return "hidden";
-          }
-          else if (d.data.change == -1) {
-            return "hidden";
-          }
-          else {
-            return "visible";
-          }
-        });
-
+                       .data(pack(ver_root[i]).children)
+                       .enter().append("g")
+                       .attr("class", function(d) {
+                          if (d.data.change == -1)  return cluster_class + " dummy_cluster";
+                          else return cluster_class; })
+                       .attr("transform", function(d) { 
+                          return "translate(" + parseFloat(d.x)  + "," + parseFloat(d.y) + ")"; })
+                       .style("visibility", function(d){
+                          if (version_list[i] != cur_idx) {
+                            return "hidden";}
+                          else if (d.data.change == -1) {
+                            return "hidden";}
+                          else {
+                            return "visible";}
+                       });
       clusters[i].append("circle")
-            .attr("class", "layer layer"+i)
-            .attr("name", function(d) {
-             return d.name; 
-           })
-            .attr("r", function(d) { return d.r; })
-            .style("fill", d3.color(version_colors[i]))
-            .style("opacity", "0.1")
-            
+                 .attr("class", "layer layer"+i)
+                 .attr("name", function(d) {
+                  return d.name; })
+                 .attr("r", function(d) { return d.r; })
+                 .style("fill", d3.color(version_colors[i]))
+                 .style("opacity", "0.1")
 
       // write cluster names
       clusters[i].append("text")
-             .attr("class", "cluster_name")
-             .attr("transform", function(d) { 
-              if( d.y - d.r < 17){
-                return "translate(" + -d.r/6*5 + "," + -d.r/6*5 + ")"; 
-              }
-              else {
-              return "translate(" + 0 + "," + -d.r + ")"; 
-            }
-            })
-            .selectAll("tspan")
-            .data(function(d) { return d.name.split(/(?=[A-Z][^A-Z])/g); })
-            .enter().append("tspan")
-            .text(function(d) { return d; })
-            .style("font-size", "15px")
-            .style("fill", "white")
-            .style("opacity", "0");
-
+                 .attr("class", "cluster_name")
+                 .attr("transform", function(d) { 
+                  if( d.y - d.r < 17){
+                    return "translate(" + -d.r/6*5 + "," + -d.r/6*5 + ")"; }
+                  else {
+                    return "translate(" + 0 + "," + -d.r + ")";}
+                 })
+                 .selectAll("tspan")
+                 .data(function(d) { return d.name.split(/(?=[A-Z][^A-Z])/g); })
+                 .enter().append("tspan")
+                 .text(function(d) { return d; })
+                 .style("font-size", "15px")
+                 .style("fill", "white")
+                 .style("opacity", "0");
     }
 
     var cur_cluster = svg.selectAll(".cluster0");
@@ -271,160 +249,122 @@ function renderGraph() {
       var nodes_class = "node node" + i;
 
       ver_nodes[i] = svg.selectAll(nodes_class)
-      .data(pack(ver_root[i]).leaves())
-      .enter().append("g")
-        .attr("class", function(d) {
-          if (d.data.change == -1) return nodes_class + " dummy_node";
-          else return nodes_class;
-        })
-        .attr("version", function(d) { return d.data.version; })
-        .attr("cluster", function(d) { return d.data.cluster; })
-        .attr("transform", function(d) {
-        return "translate(" + parseFloat(d.x)  + "," + parseFloat(d.y) + ")"; })
-        .attr("from", function(d) {return d.data.from;})
-        .attr("diff", function(d) {
-          return ('diff' in d.data);
-        })
-        .style("visibility", function(d){
-          if (d.data.version != start_version) {
-            return "hidden";
-          }
-          if (d.data.change == -1) {
-            return "hidden";
-          }
-        })
+                        .data(pack(ver_root[i]).leaves())
+                        .enter().append("g")
+                        .attr("class", function(d) {
+                          if (d.data.change == -1) return nodes_class + " dummy_node";
+                          else return nodes_class; })
+                        .attr("version", function(d) { return d.data.version; })
+                        .attr("cluster", function(d) { return d.data.cluster; })
+                        .attr("transform", function(d) {
+                        return "translate(" + parseFloat(d.x)  + "," + parseFloat(d.y) + ")"; })
+                        .attr("from", function(d) {return d.data.from;})
+                        .attr("diff", function(d) {
+                          return ('diff' in d.data); })
+                        .style("visibility", function(d){
+                          if (d.data.version != start_version) {
+                            return "hidden";
+                          }
+                          if (d.data.change == -1) {
+                            return "hidden";
+                          }
+                        })
 
-    // draw circles for components
-    ver_nodes[i].append("circle")
-        .attr("name", function(d) { return d.name; })
-        .attr("r", function(d) { return d.r; })
-        .style("fill", function(d) {
-          var start_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level-1)+1;
-          var end_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level);
-          var package_name = d.data.name.slice(start_idx, end_idx);
+      // draw circles for components
+      ver_nodes[i].append("circle")
+                  .attr("name", function(d) { return d.name; })
+                  .attr("r", function(d) { return d.r; })
+                  .style("fill", function(d) {
+                    var start_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level-1)+1;
+                    var end_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level);
+                    var package_name = d.data.name.slice(start_idx, end_idx);
+                    
+                    if (package_list.indexOf(package_name) == -1) return color(package_list.indexOf("leaf"))
+                    else  return color(package_list.indexOf(package_name));
+                  })
+                  .attr("color", function(d) {
+                    var start_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level-1)+1;
+                    var end_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level);
+                    var package_name = d.data.name.slice(start_idx, end_idx);
+                    if (package_list.indexOf(package_name) == -1) return color(package_list.indexOf("leaf"))
+                    else  return color(package_list.indexOf(package_name));
+                  })
+                  .style("opacity", function(d){
+                    if (d.data.version != start_version) {
+                      return "0.2";
+                    }
+                  })
+                  .on("mouseover", function(d) {
+                      if ($("#show_history").is(':checked')) {
+                        var cur_node = d;
+                        var link = svg.selectAll("line.node");
+                        link.style("visibility", function(d){
+                          if (d.source.name == cur_node.data.name) {
+                            return "visible";
+                          }
+                          else
+                            return "hidden";
+                        })
+                        var node = svg.selectAll(".node");
+                        node.style("opacity", function(d) {
+                          if (d.name == cur_node.data.name){
+                            return "1";
+                          }
+                          else
+                            return "0.2";
+                        })
+                      }
+                  })
+                  .on("mouseout", function(d) {
+                    var cur_node = d;
+                    if ($("#show_history").is(':checked'))
+                    svg.selectAll("line.node").style("visibility", "hidden");
+                    sleep(80)
+                    svg.selectAll(".node").style("opacity", function(d) {
+                        return "1";});
+                  });
+      showColor();
+
+      ver_nodes[i].append("clipPath")
+                  .attr("name", function(d) { return "clip-" + d.name; })
+                  .append("use")
+                  .attr("xlink:href", function(d) { return "#" + d.name; });
+
+      ver_nodes[i].append("text")
+                  .attr("class", "comp_name")
+                  .style("visibility", "hidden")
+                  .attr("clip-path", function(d) { return "url(#clip-" + d.name + ")"; })
+                  .selectAll("tspan")
+                  .data(function(d) { 
+                    if(d.class == undefined) return "";
+                    else return d.class.split(/(?=[A-Z][^A-Z])/g); })
+                  .enter().append("tspan")
+                  .attr("x", 0)
+                  .attr("y", function(d, i, nodes) { return 9 + (i - nodes.length / 2 - 0.5) * 7; })
+                  .text(function(d) { return d; })
+
           
-          if (package_list.indexOf(package_name) == -1) return color(package_list.indexOf("leaf"))
-          else  return color(package_list.indexOf(package_name));
-        })
-        .attr("color", function(d) {
-          var start_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level-1)+1;
-          var end_idx = getPosition(d.data.name, ".", ver_root[i].data.package_level);
-          var package_name = d.data.name.slice(start_idx, end_idx);
-          if (package_list.indexOf(package_name) == -1) return color(package_list.indexOf("leaf"))
-          else  return color(package_list.indexOf(package_name));
-        })
-        .style("opacity", function(d){
-          if (d.data.version != start_version) {
-            return "0.2";
-          }
-        })
-        .on("mouseover", function(d) {
-          type_dict = ['Enhancement', 'Bug', 'Documentation', 'Performance', 'Test', 'Feature', '*Enhancement', '*Bug', '*Documentation', '*Performance', '*Test', '*Feature']
-            var issue_desc = "";
-            if ('issue' in d.data) {
-              $("#issue_box").text(d.data.issue);
-            }
-            if ('description' in d.data) {
-              $("#desc_box").text(d.data.description);
-            }
-            else {
-              $("#desc_box").text("Description");
-            }
-            
-            if ('label' in d.data) {
-              $("#label_box").text(type_dict[parseInt(d.data.label)])
-            }
-
-            if ($("#show_history").is(':checked')) {
-              var cur_node = d;
-              var link = svg.selectAll("line.node");
-              link.style("visibility", function(d){
-                if (d.source.name == cur_node.data.name) {
-                // if (d.source.name == cur_node.data.name && cur_node.data.version == start_idx ){
-                  return "visible";
-                }
-                else
-                  return "hidden";
-              })
-              var node = svg.selectAll(".node");
-              node.style("opacity", function(d) {
-                if (d.name == cur_node.data.name){
-                  return "1";
-                }
-                else
-                  return "0.2";
-              })
-            }
-        })
-        .on("mouseout", function(d) {
-          var cur_node = d;
-          if ($("#show_history").is(':checked'))
-          svg.selectAll("line.node").style("visibility", "hidden");
-          sleep(80)
-          svg.selectAll(".node").style("opacity", function(d) {
-              return "1";
-          });
-
-        });
-
-    showColor();
-
-    ver_nodes[i].append("clipPath")
-        .attr("name", function(d) { return "clip-" + d.name; })
-      .append("use")
-        .attr("xlink:href", function(d) { return "#" + d.name; });
-
-    ver_nodes[i].append("text")
-        .attr("class", "comp_name")
-        .style("visibility", "hidden")
-        .attr("clip-path", function(d) { return "url(#clip-" + d.name + ")"; })
-      .selectAll("tspan")
-      .data(function(d) { 
-        if(d.class == undefined) return "";
-        else return d.class.split(/(?=[A-Z][^A-Z])/g); })
-      .enter().append("tspan")
-        .attr("x", 0)
-        .attr("y", function(d, i, nodes) { return 9 + (i - nodes.length / 2 - 0.5) * 7; })
-        .text(function(d) { return d; })
-
-    ver_nodes[i].append("text")
-        .attr("class", "comp_issue")
-        .selectAll("tspan")
-        .data(function(d) { 
-          if ('issue' in d.data)
-            // var i_link = ""
-            return "i";
-          else
-            return '';
-        })
-        .enter().append("tspan")
-        .attr("x", 0)
-        .attr("y", 4)
-        .text(function(d) { return d;})
-        .style("font-size", "13px")
-        .style("fill", "white");
-        // .style("opacity", "0");
-        
-        ver_nodes[i].append("text")
-        .attr("class", "comp_diff")
-        .style("visibility", "hidden")
-        .selectAll("tspan")
-        .data(function(d) { 
-          if ('diff' in d.data)
-            return d.data.diff;
-          else
-            return '';
-        })
-        .enter().append("tspan")
-        .attr("x", 0)
-        .attr("y", 4)
-        .text(function(d) { return d;})
-        .style("font-size", "15px")
-        .style("fill", "white");
+      ver_nodes[i].append("text")
+                  .attr("class", "comp_diff")
+                  .style("visibility", "hidden")
+                  .selectAll("tspan")
+                  .data(function(d) { 
+                    if ('diff' in d.data)
+                      return d.data.diff;
+                    else
+                      return '';
+                  })
+                  .enter().append("tspan")
+                  .attr("x", 0)
+                  .attr("y", 4)
+                  .text(function(d) { return d;})
+                  .style("font-size", "15px")
+                  .style("fill", "white");
 
 
-    ver_nodes[i].append("title")
-        .text(function(d) { return d.name; });
+      ver_nodes[i].append("title")
+                  .text(function(d) { return d.name; });
+      
     }
 
     var nodes = [];
@@ -445,32 +385,28 @@ function renderGraph() {
 
   // draw component change arrows
    var links = svg.selectAll("line.node")
-              .data(concat_links)
-              // .data(plinks[1])
-              .enter()
-              .append("line")
-              .attr("x1", function(d) {
-                var affined_x = parseFloat(d.source.x) + arrow_x[version_list.indexOf(d.source.data.version)];
-
-                return affined_x; })
-              .attr("y1", function(d) {
-                var affined_y = parseFloat(d.source.y) + arrow_y[version_list.indexOf(d.source.data.version)];
-                return affined_y;})
-              .attr("x2", function(d) { 
-                var affined_x = parseFloat(d.target.x) + arrow_x[version_list.indexOf(d.target.data.version)];
-                return affined_x; })
-              .attr("y2", function(d) { 
-                var affined_y = parseFloat(d.target.y) + arrow_y[version_list.indexOf(d.target.data.version)];
-
-                return affined_y; })
-              .attr("class", "node")
-              .style("stroke", "#fff")
-              .style("stroke-width", 2)
-              .style("visibility", "hidden")
-              .attr("marker-end", "url(#arrow)");
+                  .data(concat_links)
+                  .enter()
+                  .append("line")
+                  .attr("x1", function(d) {
+                    var affined_x = parseFloat(d.source.x) + arrow_x[version_list.indexOf(d.source.data.version)];
+                    return affined_x; })
+                  .attr("y1", function(d) {
+                    var affined_y = parseFloat(d.source.y) + arrow_y[version_list.indexOf(d.source.data.version)];
+                    return affined_y;})
+                  .attr("x2", function(d) { 
+                    var affined_x = parseFloat(d.target.x) + arrow_x[version_list.indexOf(d.target.data.version)];
+                    return affined_x; })
+                  .attr("y2", function(d) { 
+                    var affined_y = parseFloat(d.target.y) + arrow_y[version_list.indexOf(d.target.data.version)];
+                    return affined_y; })
+                  .attr("class", "node")
+                  .style("stroke", "#fff")
+                  .style("stroke-width", 2)
+                  .style("visibility", "hidden")
+                  .attr("marker-end", "url(#arrow)");
 
   });
-  
 }
 
 
@@ -499,12 +435,6 @@ function changeAngle(mode){
     tl.to($('.node1'), 0.1, {x:node_history_x[1], y:node_history_y[1]});
     tl.to($('.layer1>text'), 0.1, {x:layer_history_x[1], y:layer_history_y[1]});
     
-    tl.to($('.layer2'), 0.1, {x:layer_history_x[2], y:layer_history_y[2]});
-    tl.to($('.node2'), 0.1, {x:node_history_x[2], y:node_history_y[2]});
-    tl.to($('.layer2>text'), 0.1, {x:layer_history_x[2], y:layer_history_y[2]});
-    
-    $('.layer2').css("visibility", "visible");
-    $('.node2').css("visibility", "visible");
     $('.layer1').css("visibility", "visible");
     $('.node1').css("visibility", "visible");
     $('.layer0').css("visibility", "visible");
@@ -522,12 +452,6 @@ function changeAngle(mode){
     tl.to($('.node1'), 0.1, {x:reverse_node_history_x[1], y:reverse_node_history_y[1]});
     tl.to($('.layer1>text'), 0.1, {x:reverse_layer_history_x[1], y:reverse_layer_history_y[1]});
 
-    tl.to($('.layer2'), 0.1, {x:reverse_layer_history_x[2], y:reverse_layer_history_y[2]});
-    tl.to($('.node2'), 0.1, {x:reverse_node_history_x[2], y:reverse_node_history_y[2]});
-    tl.to($('.layer2>text'), 0.1, {x:reverse_layer_history_x[2], y:reverse_layer_history_y[2]});
-
-    $('.layer2').css("visibility", "hidden");
-    $('.node2').css("visibility", "hidden");
     $('.node1').css("visibility", "hidden");
     $('.layer1').css("visibility", "hidden");
     $('.layer0').css("visibility", "hidden");
@@ -548,8 +472,6 @@ function showArrow(){
   else
     link.style("visibility", "hidden");
 }
-
-var compare_versions = [0, 0, 0];
 
 function getXOR(a,b) {
   return (a||b)&&!(a&&b);
@@ -673,7 +595,7 @@ function showSingleVersion(version, num_ver) {
 
 function showHistory() {
   if(viewMode != "History") {
-    
+
     $(".ver_list").removeClass("active");
     $(".hist_ver_list").removeClass("active");
     $("#history").addClass("active");
@@ -700,7 +622,6 @@ function showHistory() {
 
     changeMode("History");
     $("#show_history").prop("checked", true);
-    // changeViewMode("History");
     $(".cluster_name").css("opacity", "1");
     $(".cluster_name>tspan").css("opacity", "1");
   }
@@ -830,4 +751,6 @@ function getDifference(nodes, prev_nodes) {
   });
   return moved;
 };
+
+
 

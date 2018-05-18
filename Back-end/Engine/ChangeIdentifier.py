@@ -83,7 +83,7 @@ def ChangeIdentifier(out_dir, software_name, version_names, target_sub, layer, r
 			for e in c.entities:
 				if arch_idx != 0:
 					if e.name in architectures[arch_idx-1].classes and e.change == 4:
-						print e.name
+						# print e.name
 						c_data["children"].append({"name": e.name, "ids": e.issue_ids, "titles": e.titles, "bodys": e.descs, "labels": e.labels, "change": 6, "size": 1, "version": arch.label})
 						packages.add(getPackageName(e.name, package_level))
 						continue

@@ -1,0 +1,41 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVA</title>
+  <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+  <link href="assets/css/force_style.css" rel="stylesheet">
+  <link href="assets/css/cover.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="assets/js/layer.js"></script>
+  <style type="text/css">
+
+</style>
+</head>
+<body>
+<div class="site-wrapper" style="padding-bottom: 50px;">
+  <div class="row" style="margin-top: 20px;">
+    <h1>ARC</h1>
+  </div>
+<div class="row" style="margin-top: 50px; text-align: center;" >
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <h4 class="text_dark" style="text-align: left; line-height:25px;">
+ARC uses the words in the source code of a system to detect the concerns the system addresses. It then uses those concerns to group code entities into clusters that represent components. </br></br>
+
+Architecture Recovery using Concerns (ARC) recovers concerns of implementation-level entities and uses a hierarchical clustering technique to obtain architectural elements. ARC recovers concerns using the statistical language model LDA, which is obtained from the identifiers and comments in a system’s source code. LDA allows ARC to compute similarity measures between concerns and identify which concerns appear in a single implementation-level entity. Thus, ARC attempts to rely on a program’s semantics to perform recovery. ARC represents a software system as a set of documents. A document can have different topics, which are the concerns in ARC. A topic z is a multinomial probability distribution over words w. A document d is represented as a multinomial probability distribution over topics z (called the document-topic distribution). Each implementation-level entity is treated as a document where its document-topic distribution is its feature vector. Hierarchical clustering is performed by computing similarities between entities using the Jensen-Shannon divergence (Djs), which allows computing similarities between document-topic distributions.
+</br>
+
+</br>
+For further explanation, check the <a style="text-decoration: underline;" href="https://softarch.usc.edu/~josh/pubs/ase2011recovery-camready3.pdf">paper</a>
+
+    </h4>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+</div>
+</body>
+</html>
