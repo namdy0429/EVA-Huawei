@@ -361,6 +361,21 @@ function renderGraph() {
                   .style("font-size", "15px")
                   .style("fill", "white");
 
+            ver_nodes[i].append("text")
+                    .attr("class", "add_remove")
+                    .style("visibility", "hidden")
+                    .selectAll("tspan")
+                    .data(function(d) { 
+                      if (d.data.change == 4) return '';
+                      else if (d.data.change == 5) return "";
+                      else return ''; })
+                    .enter().append("tspan")
+                    .attr("x", 0)
+                    .attr("y", 4)
+                    .text(function(d) { return d;})
+                    .style("font-size", "13px")
+                    .style("fill", "white");
+
 
       ver_nodes[i].append("title")
                   .text(function(d) { return d.name; });
@@ -482,6 +497,7 @@ function add(a,b) {
 }
 
 function showSingleVersion(version, num_ver) {
+  $(".add_remove").css("visibility", "hidden")
   if (is_selecting) {
     var list_id = "#ver" + version.replace(/\./g, '').replace(/\s/g, '');
     if ($(list_id).hasClass("chosen")) {
@@ -594,6 +610,7 @@ function showSingleVersion(version, num_ver) {
 
 
 function showHistory() {
+  $(".add_remove").css("visibility", "hidden")
   if(viewMode != "History") {
 
     $(".ver_list").removeClass("active");
@@ -662,8 +679,10 @@ function showArchChange(version, num_ver) {
   $(".hist_ver_list").removeClass("active");
   $(list_id).addClass("active");
 
-  var cluster_class = ".cluster" + version_list.indexOf(version);
-  var node_class = ".node" + version_list.indexOf(version);
+  var cluster_class = ".cluster"
+  var node_class = ".node"
+  // var cluster_class = ".cluster" + version_list.indexOf(version);
+  // var node_class = ".node" + version_list.indexOf(version);
   var list_id = "#ver" + version.toString().replace(/\./g, '').replace(/\s/g, '');
 
   $(".node>circle").css("stroke", "none");
@@ -689,6 +708,7 @@ function showArchChange(version, num_ver) {
             return "none";
           }
         });
+  $(".add_remove").css("visibility", "visible")
 }
 
 
