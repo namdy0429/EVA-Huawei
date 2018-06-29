@@ -59,11 +59,6 @@ function changeMode(mode) {
 }
 
 function renderGraph() {
-  $(".table_index>a").attr('href', function() {
-    return location.href.split('index_single.html')[0] + 'index_combined.html?&recovery=' + params.recovery +'&ver1=' + params.ver1 + '&ver2=' + params.ver2 + '&layer=' + $(this).attr("layer") + '&target_sub=' + $(this).attr("package")
-    // return 'http://localhost:8888/EVA/Front-end/index_combined.html?&recovery=' + params.recovery +'&ver1=' + params.ver1 + '&ver2=' + params.ver2 + '&layer=' + $(this).attr("layer") + '&target_sub=' + $(this).attr("package")
-  })
-
   // set svg width to be responsive
   $("#svg_history").attr("width", window.innerWidth*0.8);
 
