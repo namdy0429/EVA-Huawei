@@ -25,7 +25,6 @@ def generate_config(rsf_file_paths, layer, recovery_name):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--inputDir')
-	parser.add_argument('--outputDir')
 	parser.add_argument('--recovery')
 	parser.add_argument('--arch1')
 	parser.add_argument('--arch2')
@@ -34,8 +33,12 @@ if __name__ == "__main__":
 
 	clusters = set()
 
+	cur_dir = "/".join(os.getcwd().split("/")[:-1])
+	print(cur_dir)
+	out_dir = "/".join(cur_dir.split("/")[:-1]) + "/Front-end"
+	print(out_dir)
+
 	if not os.path.exists("config/" + args['layer']):
-		cur_dir = "/".join(os.getcwd().split("/")[:-1])
 		configs = generate_config([args['arch1'], args['arch2']], args['layer'], args['recovery'])
 		with open("config/" + args['layer'], "w") as output:
 			for c in sorted(list(configs)):
@@ -55,10 +58,10 @@ if __name__ == "__main__":
 		ContextMapper('android', [args['arch2']], c, args['layer'], args['recovery'], True)
 	recovered_versions = getVersions([args['arch1'], args['arch2']], args['recovery'], 'android')
 	for p in packages:
-		ChangeIdentifier(args['outputDir'], 'android', recovered_versions, p, args['layer'], args['recovery'], package_level)
+		ChangeIdentifier(out_dir, 'android', recovered_versions, p, args['layer'], args['recovery'], package_level)
 	for v in range(2):
 		for c in clusters:
 			if c == "dummy":
 				continue
 			print c
-			ChangeIdentifier(args['outputDir'], 'android', [recovered_versions[v]], c, args['layer'], args['recovery'], comp_package_level)
+			ChangeIdentifier(out_dir, 'android', [recovered_versions[v]], c, args['layer'], args['recovery'], comp_package_level)
