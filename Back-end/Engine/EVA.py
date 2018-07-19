@@ -1,5 +1,8 @@
-import json, argparse, os
+#!/usr/bin/env python3.5
+import json, argparse, os, sys
 from os.path import join
+sys.path.insert(1, '/Users/namdy/.pyenv/versions/anaconda-2.0.1/lib/python2.7/site-packages')
+
 from ContextMapper import ContextMapper, getVersions
 from ChangeIdentifier import ChangeIdentifier
 
@@ -34,21 +37,21 @@ if __name__ == "__main__":
 	clusters = set()
 
 	cur_dir = "/".join(os.getcwd().split("/")[:-1])
-	print(cur_dir)
+	# print(cur_dir)
 	out_dir = "/".join(cur_dir.split("/")[:-1]) + "/Front-end"
-	print(out_dir)
+	# print(out_dir)
 
-	if not os.path.exists("config/" + args['layer']):
+	if not os.path.exists(cur_dir + "/Engine/config/" + args['layer']):
 		configs = generate_config([args['arch1'], args['arch2']], args['layer'], args['recovery'])
-		with open("config/" + args['layer'], "w") as output:
+		with open(cur_dir + "/Engine/config/" + args['layer'], "w") as output:
 			for c in sorted(list(configs)):
 				output.write(c + "\n")
 
-	with open("config/" + args['layer']) as package_names:
+	with open(cur_dir + "/Engine/config/" + args['layer']) as package_names:
 		packages = package_names.read().splitlines()
 
 	for p in packages:
-		print p
+		# print p
 		clusters.update(ContextMapper('android', [args['arch1'], args['arch2']], p, args['layer'], args['recovery']))
 	clusters = list(clusters)
 	for c in clusters:
@@ -63,5 +66,6 @@ if __name__ == "__main__":
 		for c in clusters:
 			if c == "dummy":
 				continue
-			print c
+			# print c
 			ChangeIdentifier(out_dir, 'android', [recovered_versions[v]], c, args['layer'], args['recovery'], comp_package_level)
+	print("?&recovery=" + args['recovery'] + "&ver1=" + recovered_versions[0] + "&ver2=" + recovered_versions[1])

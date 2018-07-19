@@ -20,10 +20,10 @@ def find_nth(haystack, needle, n):
 
 
 def getPackageName(package, level):
-	print(package)
+	# print(package)
 	start_idx = find_nth(package, ".", level-1)
 	end_idx = find_nth(package, ".", level)
-	print start_idx
+	# print start_idx
 	# print end_idx
 	# print len(package)
 	if end_idx == -1:
@@ -47,7 +47,7 @@ def ChangeIdentifier(out_dir, software_name, version_names, target_sub, layer, r
 	with open(output_dir + "/" + version_name + "/" + file_name + "contextualized_archs.pkl", "rb") as f:
 		architectures = pickle.load(f)
 
-	print architectures
+	# print architectures
 	version_names = []
 	for v in architectures:
 		version_names.append(v.label)
@@ -94,7 +94,7 @@ def ChangeIdentifier(out_dir, software_name, version_names, target_sub, layer, r
 	context_data['package_list'] = list(packages)
 
 	output_dir = join(out_dir, "data", software_name, recovery_name)
-	print output_dir + "/" + version_name
+	# print output_dir + "/" + version_name
 	if not os.path.exists(output_dir + "/" + version_name):
 		os.makedirs(output_dir + "/" + version_name)
 	file_name = ''
